@@ -31,7 +31,7 @@
     <main class="py-16">
       <div class="container mx-auto flex flex-col items-center">
         <!-- Player Turn -->
-        <h2 id="player-turn" class="text-fontGrey font-semibold text-3xl mb-8">Player X's Turn</h2>
+        <h2 id="player-turn" class="text-fontGrey font-semibold text-3xl mb-8">PREPARE TO FIGHT!</h2>
 
         <!-- Gameboard -->
         <div id="board-container" class="w-[80%] max-w-[400px] aspect-square grid grid-cols-3 grid-rows-3 mb-8">
@@ -49,13 +49,37 @@
         <!-- Play Again Button -->
       </div>
     </main>
-    <!-- modal -->
+    <!-- modal endgame status-->
     <div id="modal" class="wrapper pointer-events-none absolute top-0 flex h-screen w-screen items-center justify-center bg-[rgba(0,0,0,0)] transition-all">
       <div id="modal-inner" class="w-[60%] max-w-md scale-0 rounded-md border-2 py-14 px-8 border-[rgba(250,250,250,0.3)] bg-veryDarkBlue">
         <h1 id="modal-title" class="mb-6 text-4xl text-center font-semibold text-fontGrey"></h1>
         <button id="btn-reset-board" class="bg-veryDarkBlue py-6 rounded-lg text-fontGrey w-full font-bold text-2xl">
           <span class="align-middle"><i class="bx bx-revision"></i></span> PLAY AGAIN
         </button>
+      </div>
+    </div>
+    <!-- modal player -->
+    <div id="modal-player" class="wrapper pointer-events-none absolute top-0 flex h-screen w-screen items-center justify-center bg-[rgba(0,0,0,0)] transition-all">
+      <div id="modal-inner-player" class="w-[60%] max-w-md scale-0 rounded-md border-2 py-14 px-8 border-[rgba(250,250,250,0.3)] bg-veryDarkBlue">
+        <h1 id="modal-title-player" class="mb-6 text-4xl text-center font-semibold text-fontGrey">Enter Player Name</h1>
+        <form action="#" class="flex flex-col">
+          <input id="input-player-1" maxlength="20" id="input-title" class="mb-4 rounded-sm border-2 border-[rgba(250,250,250,0.3)] bg-transparent px-2 py-1 text-white" type="text" placeholder="Player 1*" />
+          <input id="input-player-2" maxlength="20" id="input-author" class="mb-4 rounded-sm border-2 border-[rgba(250,250,250,0.3)] bg-transparent px-2 py-1 text-white" type="text" placeholder="Player 2*" />
+          <h3 class="text-fontGrey font-bold text-center text-2xl my-4">VS</h3>
+          <div class="relative mx-auto pr-7 flex items-center space-x-4 text-fontGrey transition-all">
+            <p>Human</p>
+            <label for="checkbox-switch">
+              <div onclick="toggleSwitch(event)" class="cursor-pointer w-14 h-8 rounded-full border-fontGrey border-2 p-1">
+                <div class="switchLeft pointer-events-none h-full w-fit">
+                  <span class="pointer-events-none block h-full aspect-square bg-white rounded-full"></span>
+                </div>
+              </div>
+            </label>
+            <input id="checkbox-switch" class="absolute opacity-0 pointer-events-none" id="switch" type="checkbox" />
+            <p>Bot</p>
+          </div>
+          <button id="btn-submit-player" class="bg-slate-600 py-4 mt-10 hover:opacity-70 transition-all rounded-md text-fontGrey w-full font-bold text-2xl">GO!</button>
+        </form>
       </div>
     </div>
     <script src="./js/script.js"></script>

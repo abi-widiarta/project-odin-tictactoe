@@ -35,18 +35,59 @@ const modal = document.querySelector("#modal");
 const modalInner = document.querySelector("#modal-inner");
 const modalTitle = document.querySelector("#modal-title");
 
+// modal player
+const modalPlayer = document.querySelector("#modal-player");
+const modalInnerPlayer = document.querySelector("#modal-inner-player");
+const modalTitlePlayer = document.querySelector("#modal-title-player");
+const inputPlayer1 = document.querySelector("#input-player-1");
+const inputPlayer2 = document.querySelector("#input-player-2");
+const btnSubmitPlayer = document.querySelector("#btn-submit-player");
+const playerTurn = document.querySelector("#player-turn");
+// playerTurn.innerHTML = "Enter Player Name";
+let valueInputPlayer1 = "";
+let valueInputPlayer2 = "";
+
+let playerX = {};
+let playerO = {};
+
 // buat obj player
 const player = (name) => {
   const getName = () => name;
   return { getName };
 };
 
-const playerX = player("X");
-const playerO = player("O");
+btnSubmitPlayer.addEventListener("click", (e) => {
+  e.preventDefault();
+  valueInputPlayer1 = inputPlayer1.value;
+  valueInputPlayer2 = inputPlayer2.value;
+
+  if (valueInputPlayer1 == "" && inputPlayer2.disabled == true && valueInputPlayer2 == "") {
+    alert("Please Fill The Required Fields2😉");
+  } else if (valueInputPlayer1 == "" || (valueInputPlayer2 == "" && inputPlayer2.disabled == false)) {
+    alert("Please Fill The Required Fields😉");
+  } else {
+    createPlayer(valueInputPlayer1, valueInputPlayer2);
+  }
+
+  console.log(checkSwitch());
+
+  if (checkSwitch()) {
+    console.log("vs bot");
+  }
+  // console.log(valueInputPlayer1);
+  // console.log(valueInputPlayer2);
+});
+
+const createPlayer = (player1, player2) => {
+  playerX = player(player1);
+  playerO = player(player2);
+
+  playerTurn.innerHTML = `${playerX.getName()}'s turn ( X )`;
+
+  closeModalPlayer();
+};
 
 // dom player
-const playerTurn = document.querySelector("#player-turn");
-playerTurn.innerHTML = `Player ${playerX.getName()}'s turn`;
 
 // menyimpan array ke obj dengan module
 const gameboard = (() => {
@@ -80,21 +121,73 @@ const appendBoardContainer = (boardContainer, gameboardArray) => {
 
 const checkBoard = (event, gameboardArray) => {
   const targetId = event.target.id;
-
-  if (gameboardArray[targetId] == "") {
-    if (playerTurn.innerHTML == `Player ${playerX.getName()}'s turn`) {
-      gameboardArray[targetId] = "X";
-      playerTurn.innerHTML = `Player ${playerO.getName()}'s turn`;
-    } else {
-      gameboardArray[targetId] = "O";
-      playerTurn.innerHTML = `Player ${playerX.getName()}'s turn`;
+  if (checkSwitch() == false) {
+    if (gameboardArray[targetId] == "") {
+      if (playerTurn.innerHTML == `${playerX.getName()}'s turn ( X )`) {
+        gameboardArray[targetId] = "X";
+        playerTurn.innerHTML = `${playerO.getName()}'s turn ( O )`;
+      } else {
+        gameboardArray[targetId] = "O";
+        playerTurn.innerHTML = `${playerX.getName()}'s turn ( X )`;
+      }
     }
-  }
 
-  appendBoardContainer(boardContainer, gameboardArray);
-  findElement(boardContainer, targetId);
-  checkWin(gameboardArray, winPattern);
-  checkTie(gameboardArray);
+    appendBoardContainer(boardContainer, gameboardArray);
+    findElement(boardContainer, targetId);
+    checkWin(gameboardArray, winPattern);
+    checkTie(gameboardArray);
+  } else {
+    if (gameboardArray[targetId] == "") {
+      if (playerTurn.innerHTML == `${playerX.getName()}'s turn ( X )`) {
+        gameboardArray[targetId] = "X";
+        playerTurn.innerHTML = "Bot's Turn";
+      } else {
+        gameboardArray[targetId] = "O";
+        playerTurn.innerHTML = `${playerX.getName()}'s turn ( X )`;
+      }
+    }
+
+    appendBoardContainer(boardContainer, gameboardArray);
+    findElement(boardContainer, targetId);
+    checkWin(gameboardArray, winPattern);
+    checkTie(gameboardArray);
+    checkBoardBot();
+  }
+};
+
+const generateRandomNum = () => {
+  return Math.floor(Math.random() * 9 + 1);
+};
+
+const checkBoardBot = () => {
+  let botNum = generateRandomNum();
+  console.log(botNum);
+  if (gameboardArray[botNum] == "") {
+    setTimeout(() => {
+      gameboardArray[botNum] = "O";
+
+      playerTurn.innerHTML = `${playerX.getName()}'s turn ( X )`;
+
+      appendBoardContainer(boardContainer, gameboardArray);
+      findElement(boardContainer, botNum);
+      checkWin(gameboardArray, winPattern);
+      checkTie(gameboardArray);
+    }, 500);
+  } else {
+    while (gameboardArray[botNum] != "") {
+      botNum = generateRandomNum();
+    }
+    setTimeout(() => {
+      gameboardArray[botNum] = "O";
+
+      playerTurn.innerHTML = `${playerX.getName()}'s turn ( X )`;
+
+      appendBoardContainer(boardContainer, gameboardArray);
+      findElement(boardContainer, botNum);
+      checkWin(gameboardArray, winPattern);
+      // checkTie(gameboardArray);
+    }, 500);
+  }
 };
 
 const winPattern = [
@@ -115,12 +208,12 @@ const checkWin = (gameboardArray, winPattern) => {
 
   winPattern.forEach((element) => {
     if (threeInRow(gameboardArray, "X", ...element) == true) {
-      playerTurn.innerHTML = `Player ${playerX.getName()} Win The Game!`;
-      modalTitle.innerHTML = `Player ${playerX.getName()} Win The Game!`;
+      playerTurn.innerHTML = "FINISH!";
+      modalTitle.innerHTML = `( X ) <br><br> ${playerX.getName()} Won The Game!`;
       openModal();
     } else if (threeInRow(gameboardArray, "O", ...element) == true) {
-      playerTurn.innerHTML = `Player ${playerO.getName()} Win The Game!`;
-      modalTitle.innerHTML = `Player ${playerO.getName()} Win The Game!`;
+      playerTurn.innerHTML = "FINISH!";
+      modalTitle.innerHTML = `( O ) <br><br> ${playerO.getName()} Won The Game!`;
       openModal();
     }
   });
@@ -138,8 +231,12 @@ const checkTie = (gameboardArray) => {
     return isEmpty;
   };
 
-  if (checkArrayEmpty() && playerTurn.innerHTML == `Player ${playerO.getName()}'s turn`) {
-    playerTurn.innerHTML = "Tie!";
+  if (checkArrayEmpty() && playerTurn.innerHTML == `${playerO.getName()}'s turn ( O )`) {
+    playerTurn.innerHTML = "FINISH!";
+    modalTitle.innerHTML = `Tie!`;
+    openModal();
+  } else if (checkArrayEmpty() && playerTurn.innerHTML == "Bot's Turn") {
+    playerTurn.innerHTML = "FINISH!";
     modalTitle.innerHTML = `Tie!`;
     openModal();
   }
@@ -151,11 +248,16 @@ const resetBoard = (gameboardArray) => {
   }
   boardContainer.innerHTML = "";
   appendBoardContainer(boardContainer, gameboardArray);
-  playerTurn.innerHTML = `Player ${playerX.getName()}'s turn`;
+  playerTurn.innerHTML = "PREPARE TO FIGHT!";
+  inputPlayer1.value = "";
+  inputPlayer2.value = "";
 };
 
 btnReset.addEventListener("click", () => {
   closeModal(gameboardArray);
+  setTimeout(() => {
+    openModalPlayer();
+  }, 150);
 });
 
 checkTie(gameboardArray);
@@ -185,6 +287,14 @@ const closeModal = (gameboardArray) => {
   resetBoard(gameboardArray);
 };
 
+// fungsi tutup modal player
+const closeModalPlayer = () => {
+  modalInnerPlayer.classList.remove("scaleUp");
+  modalInnerPlayer.classList.add("scaleDown");
+  modalPlayer.classList.toggle("pointer-events-none");
+  modalPlayer.style.backgroundColor = "rgba(0,0,0,0)";
+};
+
 // fungsi buka modal
 const openModal = () => {
   modalInner.classList.add("scaleUp");
@@ -193,9 +303,59 @@ const openModal = () => {
   modal.classList.toggle("pointer-events-none");
 };
 
+// fungsi buka modalPlayer
+const openModalPlayer = () => {
+  modalInnerPlayer.classList.add("scaleUp");
+  modalInnerPlayer.classList.remove("scaleDown");
+  modalPlayer.style.backgroundColor = "rgba(0,0,0,0.2)";
+  modalPlayer.classList.toggle("pointer-events-none");
+};
+
 // saat area di luar modal di klik maka modal akan tutup
 modal.addEventListener("click", (e) => {
   if (!e.target.closest("#modal-inner")) {
     closeModal(gameboardArray);
   }
 });
+
+// modal player
+
+openModalPlayer();
+
+// toggle switch
+
+const toggleSwitch = (event) => {
+  // console.log(event.target);
+  const outerSwitch = event.target.children[0];
+  const innerSwitch = event.target.children[0].children[0];
+  outerSwitch.classList.toggle("switchRight");
+  outerSwitch.classList.toggle("switchLeft");
+  innerSwitch.classList.add("scaleXUp");
+  setTimeout(() => {
+    innerSwitch.classList.remove("scaleXUp");
+  }, 200);
+
+  // console.log(checkboxSwitch.checked);
+  checkSwitch();
+  // event.target.children[0].classList.toggle("scaleXUp");
+};
+
+// checkbox switch
+const checkboxSwitch = document.querySelector("#checkbox-switch");
+
+const checkSwitch = () => {
+  if (checkboxSwitch.checked == false) {
+    inputPlayer2.disabled = true;
+    inputPlayer2.classList.add("opacity-60");
+    inputPlayer2.value = "";
+  } else {
+    inputPlayer2.disabled = false;
+    inputPlayer2.classList.remove("opacity-60");
+  }
+
+  if (checkboxSwitch.checked) {
+    return true;
+  } else {
+    return false;
+  }
+};

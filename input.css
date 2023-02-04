@@ -43,3 +43,54 @@
     transform: scale(0);
   }
 }
+
+.switchRight {
+  animation-name: switchRight;
+  animation-duration: 200ms;
+  animation-fill-mode: forwards;
+}
+
+.switchLeft {
+  animation-name: switchLeft;
+  animation-duration: 200ms;
+  animation-fill-mode: forwards;
+}
+
+.scaleXUp {
+  animation-name: scaleXUp;
+  animation-duration: 200ms;
+}
+
+@keyframes switchRight {
+  0% {
+    transform: translateX(0px);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes scaleXUp {
+  0% {
+    transform: scaleX(1);
+  }
+
+  50% {
+    transform: scaleX(1.5);
+  }
+
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes switchLeft {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0px);
+  }
+}
