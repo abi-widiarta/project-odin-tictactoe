@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.box {
+  @apply w-full cursor-pointer aspect-square bg-veryDarkBlue border border-slate-500 text-7xl flex justify-center items-center text-white hover:opacity-60 transition-all;
+}
+
+.reset-hover {
+  @apply hover:opacity-100;
+}
+
+.scaleUp {
+  animation-name: scaleUp;
+  animation-duration: 150ms;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+}
+
+.scaleDown {
+  animation-name: scaleDown;
+  animation-duration: 150ms;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes scaleUp {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleDown {
+  0% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(0);
+  }
+}
