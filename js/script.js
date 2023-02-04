@@ -68,7 +68,11 @@ const appendBoardContainer = (boardContainer, gameboardArray) => {
     boardBox.onclick = (event) => {
       checkBoard(event, gameboardArray);
     };
-    boardBox.innerText = element;
+    boardBox.innerHTML = `
+    <div>
+      ${element}
+    </div>
+    `;
 
     boardContainer.appendChild(boardBox);
   });
@@ -88,6 +92,7 @@ const checkBoard = (event, gameboardArray) => {
   }
 
   appendBoardContainer(boardContainer, gameboardArray);
+  findElement(boardContainer, targetId);
   checkWin(gameboardArray, winPattern);
   checkTie(gameboardArray);
 };
@@ -118,24 +123,8 @@ const checkWin = (gameboardArray, winPattern) => {
       modalTitle.innerHTML = `Player ${playerO.getName()} Win The Game!`;
       openModal();
     }
-    // if (threeInRow(gameboardArray, "X", ...element) == true) {
-    //   if (playerTurn.innerHTML == `Player ${playerO.getName()}'s turn`) {
-    //     playerTurn.innerHTML = `Player ${playerX.getName()} Win The Game!`;
-    //     modalTitle.innerHTML = `Player ${playerX.getName()} Win The Game!`;
-    //     openModal();
-    //   } else {
-    //     playerTurn.innerHTML = `Player ${playerO.getName()} Win The Game!`;
-    //   }
-    // } else if (threeInRow(gameboardArray, "O", ...element) == true) {
-    //   if (playerTurn.innerHTML == `Player ${playerO.getName()}'s turn`) {
-    //     playerTurn.innerHTML = `Player ${playerX.getName()} Win The Game!`;
-    //   } else {
-    //     playerTurn.innerHTML = `Player ${playerO.getName()} Win The Game!`;
-    //   }
-    // }
   });
 };
-// checkWin(gameboardArray, winPattern);
 
 const checkTie = (gameboardArray) => {
   checkArrayEmpty = () => {
@@ -172,6 +161,17 @@ btnReset.addEventListener("click", () => {
 checkTie(gameboardArray);
 
 appendBoardContainer(boardContainer, gameboardArray);
+
+const findElement = (boardContainer, index) => {
+  const arrayBoardContainer = boardContainer.children;
+
+  for (const i of arrayBoardContainer) {
+    if (i.id == index) {
+      i.children[0].classList.add("scaleUp");
+      i.classList.add("reset-hover");
+    }
+  }
+};
 
 // MODAL
 
