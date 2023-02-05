@@ -275,12 +275,11 @@ checkArrayFull = (gameboardArray) => {
 };
 
 const checkTie = (gameboardArray) => {
-  console.log("checktie");
   if (checkArrayFull(gameboardArray) && playerTurn.innerHTML == `${playerO.getName()}'s turn ( O )`) {
     playerTurn.innerHTML = "FINISH!";
     modalTitle.innerHTML = `Tie!`;
     openModal();
-  } else if (checkArrayFull(gameboardArray)) {
+  } else if (checkArrayFull(gameboardArray) && checkboxSwitch.checked == true) {
     console.log("tes tie bot");
     playerTurn.innerHTML = "FINISH!";
     modalTitle.innerHTML = `Tie!`;
