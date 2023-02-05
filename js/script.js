@@ -43,6 +43,13 @@ const inputPlayer1 = document.querySelector("#input-player-1");
 const inputPlayer2 = document.querySelector("#input-player-2");
 const btnSubmitPlayer = document.querySelector("#btn-submit-player");
 const playerTurn = document.querySelector("#player-turn");
+
+// checkbox switch
+const checkboxSwitch = document.querySelector("#checkbox-switch");
+
+// modal check
+const modalCheck = document.querySelector("#modal-check");
+
 // playerTurn.innerHTML = "Enter Player Name";
 let valueInputPlayer1 = "";
 let valueInputPlayer2 = "";
@@ -61,19 +68,25 @@ btnSubmitPlayer.addEventListener("click", (e) => {
   valueInputPlayer1 = inputPlayer1.value;
   valueInputPlayer2 = inputPlayer2.value;
 
-  if (valueInputPlayer1 == "" && inputPlayer2.disabled == true && valueInputPlayer2 == "") {
-    alert("Please Fill The Required Fields2😉");
-  } else if (valueInputPlayer1 == "" || (valueInputPlayer2 == "" && inputPlayer2.disabled == false)) {
-    alert("Please Fill The Required Fields😉");
+  if ((valueInputPlayer1 == "" || valueInputPlayer2 == "") && inputPlayer2.disabled == false) {
+    alert("Please Fill Player 1 And Player 2 Name's😉");
+    // checkboxSwitch.checked = true;
+    console.log(`btn submit : ${checkboxSwitch.checked}`);
+  } else if (valueInputPlayer1 == "" && inputPlayer2.disabled == true) {
+    alert("Please Fill Player 1 Name's😉");
   } else {
     createPlayer(valueInputPlayer1, valueInputPlayer2);
   }
 
-  console.log(checkSwitch());
+  // console.log(checkSwitch());
 
-  if (checkSwitch()) {
-    console.log("vs bot");
-  }
+  // if (checkSwitch()) {
+  //   console.log("vs bot");
+  // }
+
+  // checkboxSwitch.checked = true;
+  // console.log(`btn submit : ${checkboxSwitch.checked}`);
+
   // console.log(valueInputPlayer1);
   // console.log(valueInputPlayer2);
 });
@@ -140,7 +153,7 @@ const checkBoard = (event, gameboardArray) => {
     if (gameboardArray[targetId] == "") {
       if (playerTurn.innerHTML == `${playerX.getName()}'s turn ( X )`) {
         gameboardArray[targetId] = "X";
-        playerTurn.innerHTML = "Bot's Turn";
+        playerTurn.innerHTML = `<div> Bot's Turn <img class="w-6 inline-block" src="./assets/loading.gif" alt="loading" /></div>`;
       } else {
         gameboardArray[targetId] = "O";
         playerTurn.innerHTML = `${playerX.getName()}'s turn ( X )`;
@@ -151,17 +164,23 @@ const checkBoard = (event, gameboardArray) => {
     findElement(boardContainer, targetId);
     checkWin(gameboardArray, winPattern);
     checkTie(gameboardArray);
-    checkBoardBot();
+
+    if (checkboxSwitch.checked && !modalInner.classList.contains("scaleUp")) {
+      checkBoardBot();
+    }
   }
 };
 
 const generateRandomNum = () => {
-  return Math.floor(Math.random() * 9 + 1);
+  return Math.floor(Math.random() * 9);
 };
 
 const checkBoardBot = () => {
   let botNum = generateRandomNum();
-  console.log(botNum);
+  modalCheck.classList.remove("pointer-events-none");
+  setTimeout(() => {
+    modalCheck.classList.add("pointer-events-none");
+  }, 1000);
   if (gameboardArray[botNum] == "") {
     setTimeout(() => {
       gameboardArray[botNum] = "O";
@@ -172,21 +191,27 @@ const checkBoardBot = () => {
       findElement(boardContainer, botNum);
       checkWin(gameboardArray, winPattern);
       checkTie(gameboardArray);
-    }, 500);
+    }, 1000);
   } else {
-    while (gameboardArray[botNum] != "") {
+    while (gameboardArray[botNum] != "" && !checkArrayFull(gameboardArray)) {
       botNum = generateRandomNum();
     }
-    setTimeout(() => {
-      gameboardArray[botNum] = "O";
 
-      playerTurn.innerHTML = `${playerX.getName()}'s turn ( X )`;
+    console.log(botNum);
 
-      appendBoardContainer(boardContainer, gameboardArray);
-      findElement(boardContainer, botNum);
-      checkWin(gameboardArray, winPattern);
-      // checkTie(gameboardArray);
-    }, 500);
+    if (!checkArrayFull(gameboardArray)) {
+      // console.log("tes");
+      setTimeout(() => {
+        gameboardArray[botNum] = "O";
+        playerTurn.innerHTML = `${playerX.getName()}'s turn ( X )`;
+        appendBoardContainer(boardContainer, gameboardArray);
+        findElement(boardContainer, botNum);
+        checkWin(gameboardArray, winPattern);
+      }, 1000);
+    } else {
+      console.log("tes else");
+      checkTie(gameboardArray);
+    }
   }
 };
 
@@ -201,41 +226,62 @@ const winPattern = [
   [2, 4, 6],
 ];
 
+const checkIsBot = () => {
+  if (checkboxSwitch.checked) {
+    checkBoardBot();
+  }
+};
+
 const checkWin = (gameboardArray, winPattern) => {
   const threeInRow = (gameboardArray, choice, index1, index2, index3) => {
     return gameboardArray[index1] == gameboardArray[index2] && gameboardArray[index2] == gameboardArray[index3] && gameboardArray[index3] == choice;
   };
+
+  if (checkboxSwitch.checked == false) {
+  }
 
   winPattern.forEach((element) => {
     if (threeInRow(gameboardArray, "X", ...element) == true) {
       playerTurn.innerHTML = "FINISH!";
       modalTitle.innerHTML = `( X ) <br><br> ${playerX.getName()} Won The Game!`;
       openModal();
+      inputPlayer2.disabled = false;
+      inputPlayer2.classList.remove("opacity-60");
+      inputPlayer2.classList.add("opacity-100");
     } else if (threeInRow(gameboardArray, "O", ...element) == true) {
       playerTurn.innerHTML = "FINISH!";
-      modalTitle.innerHTML = `( O ) <br><br> ${playerO.getName()} Won The Game!`;
+      if (checkboxSwitch.checked == true) {
+        modalTitle.innerHTML = `( O ) <br><br> Bot Won The Game!`;
+      } else {
+        modalTitle.innerHTML = `( O ) <br><br> ${playerO.getName()} Won The Game!`;
+      }
       openModal();
+      inputPlayer2.disabled = false;
+      inputPlayer2.classList.remove("opacity-60");
+      inputPlayer2.classList.add("opacity-100");
     }
   });
 };
 
+checkArrayFull = (gameboardArray) => {
+  let isFull = true;
+  gameboardArray.forEach((element) => {
+    if (element == "") {
+      isFull = false;
+    }
+  });
+
+  return isFull;
+};
+
 const checkTie = (gameboardArray) => {
-  checkArrayEmpty = () => {
-    let isEmpty = true;
-    gameboardArray.forEach((element) => {
-      if (element == "") {
-        isEmpty = false;
-      }
-    });
-
-    return isEmpty;
-  };
-
-  if (checkArrayEmpty() && playerTurn.innerHTML == `${playerO.getName()}'s turn ( O )`) {
+  console.log("checktie");
+  if (checkArrayFull(gameboardArray) && playerTurn.innerHTML == `${playerO.getName()}'s turn ( O )`) {
     playerTurn.innerHTML = "FINISH!";
     modalTitle.innerHTML = `Tie!`;
     openModal();
-  } else if (checkArrayEmpty() && playerTurn.innerHTML == "Bot's Turn") {
+  } else if (checkArrayFull(gameboardArray)) {
+    console.log("tes tie bot");
     playerTurn.innerHTML = "FINISH!";
     modalTitle.innerHTML = `Tie!`;
     openModal();
@@ -254,10 +300,7 @@ const resetBoard = (gameboardArray) => {
 };
 
 btnReset.addEventListener("click", () => {
-  closeModal(gameboardArray);
-  setTimeout(() => {
-    openModalPlayer();
-  }, 150);
+  location.reload();
 });
 
 checkTie(gameboardArray);
@@ -300,7 +343,7 @@ const openModal = () => {
   modalInner.classList.add("scaleUp");
   modalInner.classList.remove("scaleDown");
   modal.style.backgroundColor = "rgba(0,0,0,0.2)";
-  modal.classList.toggle("pointer-events-none");
+  modal.classList.remove("pointer-events-none");
 };
 
 // fungsi buka modalPlayer
@@ -312,11 +355,11 @@ const openModalPlayer = () => {
 };
 
 // saat area di luar modal di klik maka modal akan tutup
-modal.addEventListener("click", (e) => {
-  if (!e.target.closest("#modal-inner")) {
-    closeModal(gameboardArray);
-  }
-});
+// modal.addEventListener("click", (e) => {
+//   if (!e.target.closest("#modal-inner")) {
+//     closeModal(gameboardArray);
+//   }
+// });
 
 // modal player
 
@@ -325,7 +368,6 @@ openModalPlayer();
 // toggle switch
 
 const toggleSwitch = (event) => {
-  // console.log(event.target);
   const outerSwitch = event.target.children[0];
   const innerSwitch = event.target.children[0].children[0];
   outerSwitch.classList.toggle("switchRight");
@@ -334,14 +376,8 @@ const toggleSwitch = (event) => {
   setTimeout(() => {
     innerSwitch.classList.remove("scaleXUp");
   }, 200);
-
-  // console.log(checkboxSwitch.checked);
   checkSwitch();
-  // event.target.children[0].classList.toggle("scaleXUp");
 };
-
-// checkbox switch
-const checkboxSwitch = document.querySelector("#checkbox-switch");
 
 const checkSwitch = () => {
   if (checkboxSwitch.checked == false) {

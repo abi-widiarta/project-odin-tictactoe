@@ -593,6 +593,10 @@ video {
   display: block;
 }
 
+.inline-block {
+  display: inline-block;
+}
+
 .flex {
   display: flex;
 }
@@ -644,6 +648,14 @@ video {
 .w-fit {
   width: -moz-fit-content;
   width: fit-content;
+}
+
+.w-10 {
+  width: 2.5rem;
+}
+
+.w-6 {
+  width: 1.5rem;
 }
 
 .max-w-\[400px\] {
