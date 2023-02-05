@@ -24,18 +24,20 @@ Alur Program :
 - cek seri
 */
 
-// buat board container
+// ====== SELECTOR =====
+
+// BOARD CONTAINER
 const boardContainer = document.querySelector("#board-container");
 
-// btn reset board
+// BTN RESET BOARD
 const btnReset = document.querySelector("#btn-reset-board");
 
-// modal
+// MODAL END GAME
 const modal = document.querySelector("#modal");
 const modalInner = document.querySelector("#modal-inner");
 const modalTitle = document.querySelector("#modal-title");
 
-// modal player
+// MODAL PLAYER
 const modalPlayer = document.querySelector("#modal-player");
 const modalInnerPlayer = document.querySelector("#modal-inner-player");
 const modalTitlePlayer = document.querySelector("#modal-title-player");
@@ -44,25 +46,48 @@ const inputPlayer2 = document.querySelector("#input-player-2");
 const btnSubmitPlayer = document.querySelector("#btn-submit-player");
 const playerTurn = document.querySelector("#player-turn");
 
-// checkbox switch
-const checkboxSwitch = document.querySelector("#checkbox-switch");
-
-// modal check
+// MODAL POINTER EVENTS CHECK
 const modalCheck = document.querySelector("#modal-check");
 
-// playerTurn.innerHTML = "Enter Player Name";
+// CHECKBOX SWITCH
+const checkboxSwitch = document.querySelector("#checkbox-switch");
+
+// ====== INISIALISASI DAN FUNGSI =====
+
+// INISIALISASI VARIABLE VALUE INPUT DAN PLAYER
 let valueInputPlayer1 = "";
 let valueInputPlayer2 = "";
 
 let playerX = {};
 let playerO = {};
 
-// buat obj player
+//  INISIALISASI WIN PATTERN UNTUK ARRAY BOARD MULAI DARI 0
+const winPattern = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
+
+// FACTORY FUNCTION PLAYER
 const player = (name) => {
   const getName = () => name;
   return { getName };
 };
 
+// GAMEBOARD DALAM MODULE DAN INISIALISASI
+const gameboard = (() => {
+  const gameboardArray = ["", "", "", "", "", "", "", "", ""];
+  return { gameboardArray };
+})();
+
+let gameboardArray = gameboard.gameboardArray;
+
+// EVENT LISTENER SUBMIT PLAYER
 btnSubmitPlayer.addEventListener("click", (e) => {
   e.preventDefault();
   valueInputPlayer1 = inputPlayer1.value;
@@ -70,27 +95,15 @@ btnSubmitPlayer.addEventListener("click", (e) => {
 
   if ((valueInputPlayer1 == "" || valueInputPlayer2 == "") && inputPlayer2.disabled == false) {
     alert("Please Fill Player 1 And Player 2 Name's😉");
-    // checkboxSwitch.checked = true;
     console.log(`btn submit : ${checkboxSwitch.checked}`);
   } else if (valueInputPlayer1 == "" && inputPlayer2.disabled == true) {
     alert("Please Fill Player 1 Name's😉");
   } else {
     createPlayer(valueInputPlayer1, valueInputPlayer2);
   }
-
-  // console.log(checkSwitch());
-
-  // if (checkSwitch()) {
-  //   console.log("vs bot");
-  // }
-
-  // checkboxSwitch.checked = true;
-  // console.log(`btn submit : ${checkboxSwitch.checked}`);
-
-  // console.log(valueInputPlayer1);
-  // console.log(valueInputPlayer2);
 });
 
+// FUNGSI MEMBUAT PLAYER BERDASARKAN INPUTAN
 const createPlayer = (player1, player2) => {
   playerX = player(player1);
   playerO = player(player2);
@@ -100,18 +113,7 @@ const createPlayer = (player1, player2) => {
   closeModalPlayer();
 };
 
-// dom player
-
-// menyimpan array ke obj dengan module
-const gameboard = (() => {
-  const gameboardArray = ["", "", "", "", "", "", "", "", ""];
-  return { gameboardArray };
-})();
-
-let gameboardArray = gameboard.gameboardArray;
-
-// menambah dan menampilkan board box ke boardcontainer
-
+// FUNGSI MEMBUAT DIV SESUAI ARRAY DAN DITAMBAH KE BOARD CONTAINER
 const appendBoardContainer = (boardContainer, gameboardArray) => {
   boardContainer.innerHTML = "";
   gameboardArray.forEach((element, index) => {
@@ -127,11 +129,11 @@ const appendBoardContainer = (boardContainer, gameboardArray) => {
       ${element}
     </div>
     `;
-
     boardContainer.appendChild(boardBox);
   });
 };
 
+// FUNGSI SETIAP KALI BOARD DI CHECK
 const checkBoard = (event, gameboardArray) => {
   const targetId = event.target.id;
   if (checkSwitch() == false) {
@@ -171,10 +173,12 @@ const checkBoard = (event, gameboardArray) => {
   }
 };
 
+// FUNGSI GENERATE RANDOM NUMBER
 const generateRandomNum = () => {
   return Math.floor(Math.random() * 9);
 };
 
+// FUNGSI CHECKBOARD SAAT MODE VS BOT
 const checkBoardBot = () => {
   let botNum = generateRandomNum();
   modalCheck.classList.remove("pointer-events-none");
@@ -200,7 +204,6 @@ const checkBoardBot = () => {
     console.log(botNum);
 
     if (!checkArrayFull(gameboardArray)) {
-      // console.log("tes");
       setTimeout(() => {
         gameboardArray[botNum] = "O";
         playerTurn.innerHTML = `${playerX.getName()}'s turn ( X )`;
@@ -215,23 +218,7 @@ const checkBoardBot = () => {
   }
 };
 
-const winPattern = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6],
-];
-
-const checkIsBot = () => {
-  if (checkboxSwitch.checked) {
-    checkBoardBot();
-  }
-};
-
+// FUNGSI CHECK WIN DENGAN CHECK THREE IN ROW TERLEBIH DAHULU
 const checkWin = (gameboardArray, winPattern) => {
   const threeInRow = (gameboardArray, choice, index1, index2, index3) => {
     return gameboardArray[index1] == gameboardArray[index2] && gameboardArray[index2] == gameboardArray[index3] && gameboardArray[index3] == choice;
@@ -263,6 +250,7 @@ const checkWin = (gameboardArray, winPattern) => {
   });
 };
 
+// FUNGSI CHECK ARRAY FULL DIGUNAKAN SAAT CHECK TIE
 checkArrayFull = (gameboardArray) => {
   let isFull = true;
   gameboardArray.forEach((element) => {
@@ -274,19 +262,20 @@ checkArrayFull = (gameboardArray) => {
   return isFull;
 };
 
+// FUNGSI CHECK TIE DENGAN MEMANFAATKAN FUNGSI CHECKFULL
 const checkTie = (gameboardArray) => {
   if (checkArrayFull(gameboardArray) && playerTurn.innerHTML == `${playerO.getName()}'s turn ( O )`) {
     playerTurn.innerHTML = "FINISH!";
     modalTitle.innerHTML = `Tie!`;
     openModal();
-  } else if (checkArrayFull(gameboardArray) && checkboxSwitch.checked == true) {
-    console.log("tes tie bot");
+  } else if (checkArrayFull(gameboardArray) && checkboxSwitch.checked == true && playerTurn.innerHTML == `<div> Bot's Turn <img class="w-6 inline-block" src="./assets/loading.gif" alt="loading" /></div>`) {
     playerTurn.innerHTML = "FINISH!";
     modalTitle.innerHTML = `Tie!`;
     openModal();
   }
 };
 
+// FUNGSI RESET BOARD SEPERTI AWAL, TIDAK TERLALU TERPAKAI KARENA SUDAH RELOAD
 const resetBoard = (gameboardArray) => {
   for (const i in gameboardArray) {
     gameboardArray[i] = "";
@@ -298,14 +287,12 @@ const resetBoard = (gameboardArray) => {
   inputPlayer2.value = "";
 };
 
+// EVENT LISTENER DI MODAL END GAME
 btnReset.addEventListener("click", () => {
   location.reload();
 });
 
-checkTie(gameboardArray);
-
-appendBoardContainer(boardContainer, gameboardArray);
-
+// FUNGSI MENCARI ELEMENT UNTUK DITAMBAKAN ANIMASI SCALE
 const findElement = (boardContainer, index) => {
   const arrayBoardContainer = boardContainer.children;
 
@@ -317,9 +304,7 @@ const findElement = (boardContainer, index) => {
   }
 };
 
-// MODAL
-
-// fungsi tutup modal
+// FUNGSI TUTUP MODAL ENDGAME
 const closeModal = (gameboardArray) => {
   modalInner.classList.remove("scaleUp");
   modalInner.classList.add("scaleDown");
@@ -329,7 +314,7 @@ const closeModal = (gameboardArray) => {
   resetBoard(gameboardArray);
 };
 
-// fungsi tutup modal player
+// FUNGSI TUTUP MODAL PLAYER
 const closeModalPlayer = () => {
   modalInnerPlayer.classList.remove("scaleUp");
   modalInnerPlayer.classList.add("scaleDown");
@@ -337,7 +322,7 @@ const closeModalPlayer = () => {
   modalPlayer.style.backgroundColor = "rgba(0,0,0,0)";
 };
 
-// fungsi buka modal
+// FUNGSI BUKA MODAL ENDGAME
 const openModal = () => {
   modalInner.classList.add("scaleUp");
   modalInner.classList.remove("scaleDown");
@@ -345,7 +330,7 @@ const openModal = () => {
   modal.classList.remove("pointer-events-none");
 };
 
-// fungsi buka modalPlayer
+// FUNGSI BUKA MODAL PLAYER
 const openModalPlayer = () => {
   modalInnerPlayer.classList.add("scaleUp");
   modalInnerPlayer.classList.remove("scaleDown");
@@ -353,19 +338,14 @@ const openModalPlayer = () => {
   modalPlayer.classList.toggle("pointer-events-none");
 };
 
-// saat area di luar modal di klik maka modal akan tutup
+// FUNGSI SAAT AREA DILUAR MODAL ENDGAME DI TEKAN MODAL AKAN TERTUTUP
 // modal.addEventListener("click", (e) => {
 //   if (!e.target.closest("#modal-inner")) {
 //     closeModal(gameboardArray);
 //   }
 // });
 
-// modal player
-
-openModalPlayer();
-
-// toggle switch
-
+// FUNGSI UNTUK MENAMBAH ANIMASI TOGGLE SWITCH
 const toggleSwitch = (event) => {
   const outerSwitch = event.target.children[0];
   const innerSwitch = event.target.children[0].children[0];
@@ -378,6 +358,7 @@ const toggleSwitch = (event) => {
   checkSwitch();
 };
 
+// FUNGSI UNTUK MENAMBAH ANIMASI TOGGLE SWITCH
 const checkSwitch = () => {
   if (checkboxSwitch.checked == false) {
     inputPlayer2.disabled = true;
@@ -394,3 +375,7 @@ const checkSwitch = () => {
     return false;
   }
 };
+
+openModalPlayer();
+// checkTie(gameboardArray);
+appendBoardContainer(boardContainer, gameboardArray);
