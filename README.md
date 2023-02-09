@@ -17,5 +17,5 @@ The script is still very messy and not clean coded, in the future I hope I can i
 
 
 
-Link Demo : https://project-odin-tictactoe.vercel.app/
+Demo Link : https://project-odin-tictactoe.vercel.app/
 
