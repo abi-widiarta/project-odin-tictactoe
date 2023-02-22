@@ -12,7 +12,7 @@ Obstacles :
 - Messy script structure affect the readability of certain function which is hard to find
 - Because of solving the problems directly while coding and due to a lot of problems that occured, at somepoint I forgot about what I just code and need to take time to understand it again
 - I'm planning to add a button that doesn't require the user to input the player name again, and use the previous name or vs mode
-
+- There is still a few bugs can be occured while vs bot
 The script is still very messy and not clean coded, in the future I hope I can implement KIS and have a better script structure, because for this one is mostly my own solution from the problems that I created while coding.
 
 
